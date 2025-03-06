@@ -32,7 +32,7 @@ public partial class Client : Node
 
     private void OnRTCPeerDisconnected(long id)
     {
-        debugTextEmit.Invoke($"RTC peer connected : {id}");
+        debugTextEmit.Invoke($"RTC peer disconnected : {id}");
 
     }
 
@@ -40,7 +40,7 @@ public partial class Client : Node
     private void OnRTCPeerConnected(long id)
     {
         GD.Print("RTC peer connected");
-        debugTextEmit.Invoke($"RTC peer disconnected : {id}");
+        debugTextEmit.Invoke($"RTC peer connected : {id}");
 
     }
 

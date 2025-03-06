@@ -1,10 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://c1352mruyb878"]
+[gd_scene load_steps=2 format=3 uid="uid://c1352mruyb878"]
 
-[ext_resource type="PackedScene" uid="uid://bth3tc6y0mbjp" path="res://BackEnd/Server/Server.tscn" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://bxlruktpyfk71" path="res://BackEnd/Server/ServerUI.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cojanbvp3k8lg" path="res://BackEnd/WebRTC/TestScene.tscn" id="1_ig7tw"]
 
 [node name="Main" type="Node"]
 
-[node name="Server" parent="." instance=ExtResource("1_ig7tw")]
-
-[node name="ServerUi" parent="Server" instance=ExtResource("2_0xm2m")]
+[node name="TestScene" parent="." instance=ExtResource("1_ig7tw")]

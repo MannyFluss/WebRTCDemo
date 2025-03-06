@@ -1,65 +1,97 @@
-[gd_scene load_steps=4 format=3 uid="uid://bog46tlohmnro"]
+[gd_scene load_steps=6 format=3 uid="uid://cojanbvp3k8lg"]
 
-[ext_resource type="Script" uid="uid://cm7slfo1nhuba" path="res://BackEnd/WebRTC/WEBrtcClient.cs" id="1_lkoe4"]
-[ext_resource type="Script" uid="uid://dryfmc56nx7ny" path="res://BackEnd/WebRTC/Testscene.cs" id="1_v8kv0"]
-[ext_resource type="Script" uid="uid://0ebrk47ty53h" path="res://BackEnd/WebRTC/WEBrtcServer.cs" id="2_w2kd4"]
+[ext_resource type="Script" uid="uid://dhe4ohiuhpg24" path="res://BackEnd/WebRTC/TestSceneYAYAYAY.cs" id="1_poryh"]
+[ext_resource type="Script" uid="uid://q10x054lw8j4" path="res://BackEnd/WebRTC/Server.cs" id="2_ygvnx"]
+[ext_resource type="Script" uid="uid://pb30ujopw3pg" path="res://BackEnd/WebRTC/Client.cs" id="3_hwcg2"]
+[ext_resource type="Script" uid="uid://doy3fexuk2n5i" path="res://BackEnd/WebRTC/DebugTextPrinter.cs" id="3_ti74s"]
+[ext_resource type="Texture2D" uid="uid://lwj8shr6rr04" path="res://icon.svg" id="4_hwcg2"]
 
-[node name="Testscene" type="Control"]
+[node name="TestScene" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_v8kv0")
+script = ExtResource("1_poryh")
 
 [node name="Client" type="Node" parent="."]
-script = ExtResource("1_lkoe4")
+script = ExtResource("3_hwcg2")
+
+[node name="ClientDebug" type="RichTextLabel" parent="Client"]
+offset_left = 605.0
+offset_top = 155.0
+offset_right = 1130.0
+offset_bottom = 444.0
+script = ExtResource("3_ti74s")
 
 [node name="Server" type="Node" parent="."]
-script = ExtResource("2_w2kd4")
+script = ExtResource("2_ygvnx")
 
-[node name="ConnectServer" type="Button" parent="."]
+[node name="ServerDebug" type="RichTextLabel" parent="Server"]
+offset_left = 8.0
+offset_top = 265.0
+offset_right = 514.0
+offset_bottom = 554.0
+script = ExtResource("3_ti74s")
+
+[node name="ClientSide" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 92.0
+offset_top = -19.0
+offset_right = 132.0
+offset_bottom = 21.0
+
+[node name="ConnectClient" type="Button" parent="ClientSide"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 108.0
-offset_top = 197.0
-offset_right = 327.0
-offset_bottom = 279.0
-text = "start server"
-
-[node name="ConnectClient" type="Button" parent="."]
-unique_name_in_owner = true
-layout_mode = 0
-offset_left = 597.0
-offset_top = 181.0
-offset_right = 829.0
-offset_bottom = 260.0
+offset_left = 816.0
+offset_top = 28.0
+offset_right = 1048.0
+offset_bottom = 107.0
 text = "start client"
 
-[node name="JoinLobby" type="Button" parent="."]
+[node name="JoinLobby" type="Button" parent="ClientSide"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 674.0
-offset_top = 479.0
-offset_right = 906.0
-offset_bottom = 558.0
+offset_left = 690.0
+offset_top = 472.0
+offset_right = 922.0
+offset_bottom = 551.0
 text = "JoinLobby"
 
-[node name="PacketTest" type="Button" parent="."]
+[node name="PacketTest" type="Button" parent="ClientSide"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 648.0
-offset_top = 311.0
-offset_right = 807.0
-offset_bottom = 360.0
-text = "client send packet"
+offset_left = 854.0
+offset_top = 114.0
+offset_right = 1013.0
+offset_bottom = 163.0
+text = "ping!"
 
-[node name="LobbyValueEdit" type="LineEdit" parent="."]
+[node name="LobbyValueEdit" type="LineEdit" parent="ClientSide"]
 unique_name_in_owner = true
 layout_mode = 0
-offset_left = 681.0
-offset_top = 567.0
-offset_right = 1020.0
-offset_bottom = 616.0
+offset_left = 693.0
+offset_top = 558.0
+offset_right = 1032.0
+offset_bottom = 607.0
 placeholder_text = "lobbyvalue"
+
+[node name="ServerSide" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ConnectServer" type="Button" parent="ServerSide"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 10.0
+offset_top = 158.0
+offset_right = 229.0
+offset_bottom = 240.0
+text = "start server"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(115, 86)
+texture = ExtResource("4_hwcg2")
