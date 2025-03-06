@@ -1,0 +1,65 @@
+[gd_scene load_steps=4 format=3 uid="uid://bog46tlohmnro"]
+
+[ext_resource type="Script" uid="uid://cm7slfo1nhuba" path="res://BackEnd/WebRTC/WEBrtcClient.cs" id="1_lkoe4"]
+[ext_resource type="Script" uid="uid://dryfmc56nx7ny" path="res://BackEnd/WebRTC/Testscene.cs" id="1_v8kv0"]
+[ext_resource type="Script" uid="uid://0ebrk47ty53h" path="res://BackEnd/WebRTC/WEBrtcServer.cs" id="2_w2kd4"]
+
+[node name="Testscene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v8kv0")
+
+[node name="Client" type="Node" parent="."]
+script = ExtResource("1_lkoe4")
+
+[node name="Server" type="Node" parent="."]
+script = ExtResource("2_w2kd4")
+
+[node name="ConnectServer" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 108.0
+offset_top = 197.0
+offset_right = 327.0
+offset_bottom = 279.0
+text = "start server"
+
+[node name="ConnectClient" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 597.0
+offset_top = 181.0
+offset_right = 829.0
+offset_bottom = 260.0
+text = "start client"
+
+[node name="JoinLobby" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 674.0
+offset_top = 479.0
+offset_right = 906.0
+offset_bottom = 558.0
+text = "JoinLobby"
+
+[node name="PacketTest" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 648.0
+offset_top = 311.0
+offset_right = 807.0
+offset_bottom = 360.0
+text = "client send packet"
+
+[node name="LobbyValueEdit" type="LineEdit" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 681.0
+offset_top = 567.0
+offset_right = 1020.0
+offset_bottom = 616.0
+placeholder_text = "lobbyvalue"
