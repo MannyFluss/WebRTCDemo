@@ -1,7 +1,9 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 public partial class Server : Node
 {
@@ -25,6 +27,15 @@ public partial class Server : Node
         base._Ready(); 
         peer.PeerConnected += OnPeerConnected;
         peer.PeerDisconnected += OnPeerDisconnected;
+        
+        foreach (string arg in OS.GetCmdlineArgs()){
+            switch (arg){
+                case "-server":
+                    CreateServer();
+                    break;
+            }
+
+        }
 
     }
 
