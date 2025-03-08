@@ -3,9 +3,10 @@ using System;
 
 public partial class DebugTextPrinter : RichTextLabel
 {
-
+    [Export]
     Client MyClient = null;
 
+    [Export]
     Server MyServer = null;
 
 
@@ -13,8 +14,8 @@ public partial class DebugTextPrinter : RichTextLabel
     {
         base._Ready();
 
-        MyClient = GetParentOrNull<Client>();
-        MyServer = GetParentOrNull<Server>();
+        // MyClient = GetParentOrNull<Client>();
+        // MyServer = GetParentOrNull<Server>();
         if (MyClient!=null){
             MyClient.debugTextEmit += OnDebugTextEmitted;
         }

@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -15,8 +16,7 @@ public partial class Server : Node
     Dictionary<string, Lobby> Lobbies = new Dictionary<string, Lobby>();
     string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    [Export]
-    int port = 8976;
+    public const int defaultPort = 8976;
     [Export]
     bool debug = true;
 
@@ -32,6 +32,7 @@ public partial class Server : Node
             switch (arg){
                 case "-server":
                     CreateServer();
+                    debugTextEmit += (string value)=> { GD.Print(value);};
                     break;
             }
 
@@ -39,7 +40,8 @@ public partial class Server : Node
 
     }
 
-    public void CreateServer(){
+    public void CreateServer(int port = defaultPort){
+
         peer.CreateServer(port);
         debugTextEmit.Invoke($"server created at port {port}");
 
@@ -81,7 +83,6 @@ public partial class Server : Node
             if (packet!=null){
                 string packetString = packet.GetStringFromUtf8();
                 NetworkPacket deserializedPacket = JsonSerializer.Deserialize<NetworkPacket>(packetString);
-                //if (debug){GD.Print("server recieved packet from ", deserializedPacket.Id," ",packetString);}
                 //debugTextEmit.Invoke($"server recieved packet from  {deserializedPacket.Id} {packetString}");
                 parsePacket(deserializedPacket);
             }
@@ -116,7 +117,6 @@ public partial class Server : Node
         if (CurrentLobbyValue == ""){
             CurrentLobbyValue = GenerateRandomString();
             Lobbies[CurrentLobbyValue] = new Lobby(packet.Id);         
-            GD.Print(CurrentLobbyValue);
         }
 
         // client sends packet to server, attempting to join lobby, adds themselves to lobby,

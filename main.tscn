@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://c1352mruyb878"]
 
-[ext_resource type="PackedScene" uid="uid://cojanbvp3k8lg" path="res://BackEnd/WebRTC/TestScene.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://defktfctvq1e0" path="res://FrontEnd/LobbyUI/LobbyUI.tscn" id="1_ig7tw"]
 
 [node name="Main" type="Node"]
 
-[node name="TestScene" parent="." instance=ExtResource("1_ig7tw")]
+[node name="LobbyUI" parent="." instance=ExtResource("1_ig7tw")]

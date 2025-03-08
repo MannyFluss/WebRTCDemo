@@ -11,12 +11,18 @@ public partial class Client : Node
     int hostId = 0;
     string lobbyValue = "";
 
-    string ipAdrress = "ws://127.0.0.1:8976";
+    const string defaultPort = "8976";
+
+    //74.111.121.13
+    const string DefaultIpAdrress = "ws://127.0.0.1";
 
     [Export]
     bool debug=true;
 
     public event Action<string> debugTextEmit;
+
+    public event Action<string> LobbyValueRecieved;
+
 
     WebSocketMultiplayerPeer peer = new WebSocketMultiplayerPeer();
     WebRtcMultiplayerPeer rtcPeer = new WebRtcMultiplayerPeer();
@@ -52,9 +58,15 @@ public partial class Client : Node
     }
 
 
-    public void ConnectToServer(){
-        peer.CreateClient(ipAdrress);
-        debugTextEmit?.Invoke($"Client connection to server {ipAdrress}");
+
+    public void ConnectToServer(string ipAdrress = DefaultIpAdrress, string port = defaultPort){
+
+        if (ipAdrress==""){ipAdrress = DefaultIpAdrress;}
+        if (port==""){port = defaultPort;}
+
+
+        Error err = peer.CreateClient(ipAdrress+":"+port);
+        debugTextEmit?.Invoke($"Client connection to server {ipAdrress} with result: {err.ToString()}");
     }
 
     public override void _Process(double delta)
@@ -101,11 +113,14 @@ public partial class Client : Node
 
             case Message.USER_CONNECTED:
                 CreatePeer(packet.Id);
+
                 break;
 
             case Message.LOBBY_CONNECTED:
                 hostId = packet.HostId;
                 lobbyValue = packet.LobbyValue;
+                debugTextEmit?.Invoke($"My Lobby Key: {packet.LobbyValue}");
+                LobbyValueRecieved?.Invoke(packet.LobbyValue);
                 break;
 
             case Message.CANDIDATE:
@@ -133,7 +148,7 @@ public partial class Client : Node
                 if (rtcPeer.HasPeer(packet.OrgPeer)){
                     WebRtcPeerConnection connection = (WebRtcPeerConnection)rtcPeer.GetPeer(packet.OrgPeer)["connection"];
                     Error err = connection.SetRemoteDescription("answer",packet.Data);
-
+                    
                     GD.Print("answer ", rtcPeer, " ", connection , " ", err.ToString());
                 }
                 break;           
@@ -186,12 +201,19 @@ public partial class Client : Node
     }
 
 
-    [Rpc (MultiplayerApi.RpcMode.AnyPeer)]
+    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true)]
     public void Ping(){
         GD.Print("ping from " + Multiplayer.GetRemoteSenderId());
         debugTextEmit.Invoke($"ping from  + {Multiplayer.GetRemoteSenderId()}");
+        if (IsMultiplayerAuthority()){
+            debugTextEmit.Invoke($"I am the multiplayer authority");
+        }
     }
 
+    
+    public void StartGame(){
+
+    }
 
 
 
