@@ -34,8 +34,8 @@ public partial class LobbyUI : Control
 
     LineEdit ServerLineEdit;
     RichTextLabel LobbyValueLabel;
-
     Button CopyLabelValue;
+    Button StartLobbyButton;
     public override void _Ready()
     {
         base._Ready();
@@ -57,6 +57,7 @@ public partial class LobbyUI : Control
         ServerLineEdit = GetNode<LineEdit>("%ServerPortLineEdit");
 
         CopyLabelValue = GetNode<Button>("%CopyLobbyValue");
+        StartLobbyButton = GetNode<Button>("%StartLobby");
 
         MyClient.LobbyValueRecieved += (string value) => { GD.Print( "hi", value) ; LobbyValueLabel.Text = value;};
 
@@ -65,8 +66,16 @@ public partial class LobbyUI : Control
         packetbutton.Pressed += onPacketButtonPressed;
         joinLobbyButton.Pressed += onJoinLobbyButtonPressed;
         CopyLabelValue.Pressed += onCopyLabelValueButtonPressed;
+        StartLobbyButton.Pressed += OnStartButtonPressed;
+        
 
     }
+
+    private void OnStartButtonPressed()
+    {
+        MyClient.AttemptStartGame();
+    }
+
 
     private void onCopyLabelValueButtonPressed()
     {

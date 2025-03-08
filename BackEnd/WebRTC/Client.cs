@@ -11,18 +11,16 @@ public partial class Client : Node
     int hostId = 0;
     string lobbyValue = "";
 
+    static Client instance = null;
     const string defaultPort = "8976";
-
     //74.111.121.13
     const string DefaultIpAdrress = "ws://127.0.0.1";
-
     [Export]
     bool debug=true;
-
     public event Action<string> debugTextEmit;
-
     public event Action<string> LobbyValueRecieved;
 
+    
 
     WebSocketMultiplayerPeer peer = new WebSocketMultiplayerPeer();
     WebRtcMultiplayerPeer rtcPeer = new WebRtcMultiplayerPeer();
@@ -30,10 +28,15 @@ public partial class Client : Node
     public override void _Ready()
     {
         base._Ready();
+        if (Client.instance == null){
+            Client.instance = this;
+        } else {
+            GD.PushError("Client singleton instance already exists");
+        }
         Multiplayer.ConnectedToServer += OnConnectedToRPCServer;
         Multiplayer.PeerConnected += OnRTCPeerConnected;
         Multiplayer.PeerDisconnected += OnRTCPeerDisconnected;
- 
+
     }
 
     private void OnRTCPeerDisconnected(long id)
@@ -46,7 +49,7 @@ public partial class Client : Node
     private void OnRTCPeerConnected(long id)
     {
         GD.Print("RTC peer connected");
-        debugTextEmit.Invoke($"RTC peer connected : {id}");
+        debugTextEmit.Invoke($"RTC peer connected : {id} & {myId}");
 
     }
 
@@ -186,14 +189,14 @@ public partial class Client : Node
             debugTextEmit?.Invoke($"binding id + {id}, my id is {myId}");
             rtcPeer.AddPeer(peer,id);
 
-            if (hostId != myId){
+            if (id < rtcPeer.GetUniqueId()){
                 peer.CreateOffer();
             }
 
             // if (myId < rtcPeer.GetUniqueId()){
             //     peer.CreateOffer();
             //     GD.Print("LALALALAL");
-            // }
+            // } 
 
         }
 
@@ -205,16 +208,34 @@ public partial class Client : Node
     public void Ping(){
         GD.Print("ping from " + Multiplayer.GetRemoteSenderId());
         debugTextEmit.Invoke($"ping from  + {Multiplayer.GetRemoteSenderId()}");
-        if (IsMultiplayerAuthority()){
-            debugTextEmit.Invoke($"I am the multiplayer authority");
-        }
+
     }
 
     
-    public void StartGame(){
-
+    public void AttemptStartGame(){
+        if (hostId == myId){
+            debugTextEmit.Invoke($"I should be the authority");
+            //start game
+            Rpc("SetAuthority",[Multiplayer.GetUniqueId()]);
+            Rpc("StartGame");
+        } else {
+            debugTextEmit.Invoke($"you are not the host, you cannot start the game");
+        }
     }
 
+    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void SetAuthority(int id){
+        SetMultiplayerAuthority(id);
+    }    
+
+    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    private void StartGame(){
+        if (IsMultiplayerAuthority()){
+            debugTextEmit.Invoke($"this instance is the multiplayer authority");
+
+        }
+
+    }
 
 
 
