@@ -7,8 +7,16 @@ using System.Net.Mail;
 
 public partial class Client : Node
 {
-    int myId = 0;
-    int hostId = 0;
+
+    enum State {
+        DISCONNECTED,
+        IN_LOBBY,
+        IN_ACTIVE_SESSION,
+        
+    }
+    State myState = State.DISCONNECTED;
+    int myId = -1;
+    int hostId = -2;
     string lobbyValue = "";
 
     static Client instance = null;
@@ -43,19 +51,38 @@ public partial class Client : Node
     {
         debugTextEmit.Invoke($"RTC peer disconnected : {id}");
 
+        if (IsMultiplayerAuthority()){
+            debugTextEmit.Invoke($"I am the authority and disconnected, this should disconnect all other peers");
+        }
+
+        PrintPeers();
+
     }
 
 
     private void OnRTCPeerConnected(long id)
     {
         GD.Print("RTC peer connected");
-        debugTextEmit.Invoke($"RTC peer connected : {id} & {myId}");
-
+        debugTextEmit.Invoke($"RTC peer connected : {id}");
+        PrintPeers();
     }
 
 
+
+    private void PrintPeers(){
+        debugTextEmit.Invoke($"");
+        foreach (var kvp in rtcPeer.GetPeers()){
+            debugTextEmit.Invoke($"peer {kvp.Key}");
+        }
+
+        debugTextEmit.Invoke($"{Multiplayer.GetUniqueId()} (my id)");
+        debugTextEmit.Invoke($"current peers");
+        
+    }
+
     private void OnConnectedToRPCServer()
     {
+
         GD.Print("connected to RTC server");
         debugTextEmit.Invoke("RTC server connected");
     }
@@ -75,8 +102,11 @@ public partial class Client : Node
     public override void _Process(double delta)
     {
         base._Process(delta);
-        peer.Poll();
+        if (peer==null){
+            return;
+        }
 
+        peer.Poll();
         if (peer.GetAvailablePacketCount() > 0){
             Byte[] packet = peer.GetPacket();
             if (packet!=null){
@@ -99,6 +129,39 @@ public partial class Client : Node
         peer.PutPacket(JsonSerializer.Serialize(newPacket).ToUtf8Buffer());
     }
  
+    public void Disconnect(){
+        if (myState == State.DISCONNECTED){
+            debugTextEmit?.Invoke($"not currently connected. (nothing happens)");
+        } else {
+            debugTextEmit?.Invoke($"shutting down client");
+
+            // Gracefully close the WebSocket connection
+            if (peer.GetConnectionStatus() == MultiplayerPeer.ConnectionStatus.Connected) {
+                peer.Close();
+                // Poll to process the close event
+                peer.Poll();
+            }
+
+            // Gracefully close all WebRTC connections
+            foreach (var kvp in rtcPeer.GetPeers()) {
+                int peerId = (int)kvp.Key;
+                if (rtcPeer.HasPeer(peerId)) {
+                    WebRtcPeerConnection connection = (WebRtcPeerConnection)rtcPeer.GetPeer(peerId)["connection"];
+                    connection.Close(); 
+                    // Properly close the WebRTC connection
+                }
+            }
+
+            Multiplayer.MultiplayerPeer = null;
+            rtcPeer.Close();
+            
+            peer = new WebSocketMultiplayerPeer();
+            rtcPeer = new WebRtcMultiplayerPeer();
+
+            myId = -1;
+            hostId = -2;
+        }
+    }
     private void parsePacket(NetworkPacket packet){
 
 
@@ -124,6 +187,8 @@ public partial class Client : Node
                 lobbyValue = packet.LobbyValue;
                 debugTextEmit?.Invoke($"My Lobby Key: {packet.LobbyValue}");
                 LobbyValueRecieved?.Invoke(packet.LobbyValue);
+                myState = State.IN_LOBBY;
+
                 break;
 
             case Message.CANDIDATE:
@@ -213,6 +278,11 @@ public partial class Client : Node
 
     
     public void AttemptStartGame(){
+        if (myState != State.IN_LOBBY){
+            debugTextEmit.Invoke($"you are not in lobby, aborting. Current state {myState.ToString()}");
+            return;
+        }
+
         if (hostId == myId){
             debugTextEmit.Invoke($"I should be the authority");
             //start game
@@ -228,12 +298,16 @@ public partial class Client : Node
         SetMultiplayerAuthority(id);
     }    
 
-    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGame(){
         if (IsMultiplayerAuthority()){
             debugTextEmit.Invoke($"this instance is the multiplayer authority");
 
         }
+            debugTextEmit.Invoke($"Starting gameplay session");
+            myState = State.IN_ACTIVE_SESSION;
+
+
 
     }
 

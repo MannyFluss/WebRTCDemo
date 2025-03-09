@@ -35,6 +35,7 @@ public partial class LobbyUI : Control
     LineEdit ServerLineEdit;
     RichTextLabel LobbyValueLabel;
     Button CopyLabelValue;
+    Button DisconnectClientButton;
     Button StartLobbyButton;
     public override void _Ready()
     {
@@ -55,6 +56,7 @@ public partial class LobbyUI : Control
         myServerUI = GetNode<Control>("%ServerUI");
         LobbyValueLabel = GetNode<RichTextLabel>("%LobbyValue");
         ServerLineEdit = GetNode<LineEdit>("%ServerPortLineEdit");
+        DisconnectClientButton = GetNode<Button>("%DisconnectClient");
 
         CopyLabelValue = GetNode<Button>("%CopyLobbyValue");
         StartLobbyButton = GetNode<Button>("%StartLobby");
@@ -67,9 +69,16 @@ public partial class LobbyUI : Control
         joinLobbyButton.Pressed += onJoinLobbyButtonPressed;
         CopyLabelValue.Pressed += onCopyLabelValueButtonPressed;
         StartLobbyButton.Pressed += OnStartButtonPressed;
+        DisconnectClientButton.Pressed += OnDisconnectButtonPressed;
         
 
     }
+
+    private void OnDisconnectButtonPressed()
+    {
+        MyClient.Disconnect();
+    }
+
 
     private void OnStartButtonPressed()
     {

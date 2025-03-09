@@ -161,6 +161,11 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "StartLobby"
 
+[node name="DisconnectClient" type="Button" parent="Client/ClientUI/ClientSide/MarginContainer/ClientSideVbox/ConnectLobby/ColorRect/ConnectClientContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Disconnect"
+
 [node name="MarginContainer" type="MarginContainer" parent="Client/ClientUI/ClientSide/MarginContainer/ClientSideVbox"]
 layout_mode = 2
 size_flags_vertical = 3
