@@ -19,7 +19,7 @@ public partial class Client : Node
     int hostId = -2;
     string lobbyValue = "";
 
-    static Client instance = null;
+    public static Client instance = null;
     const string defaultPort = "8976";
     //74.111.121.13
     const string DefaultIpAdrress = "ws://127.0.0.1";
@@ -28,7 +28,7 @@ public partial class Client : Node
     public event Action<string> debugTextEmit;
     public event Action<string> LobbyValueRecieved;
 
-    
+    public event Action GameStarted;
 
     
 
@@ -52,12 +52,20 @@ public partial class Client : Node
     private void OnRTCPeerDisconnected(long id)
     {
         debugTextEmit.Invoke($"RTC peer disconnected : {id}");
+        debugTextEmit.Invoke($"{id} , {GetMultiplayerAuthority()}");
+
+        if (id == GetMultiplayerAuthority()){
+            //later on this can transfer the host to a different user
+            debugTextEmit.Invoke($"host disconnected, ending session.");
+            Disconnect();
+            return;
+        }
 
         if (IsMultiplayerAuthority()){
             debugTextEmit.Invoke($"I am the authority and disconnected, this should disconnect all other peers");
         }
+        //CallDeferred("PrintPeers");
 
-        PrintPeers();
 
     }
 
@@ -66,7 +74,13 @@ public partial class Client : Node
     {
         GD.Print("RTC peer connected");
         debugTextEmit.Invoke($"RTC peer connected : {id}");
-        PrintPeers();
+        if (hostId == myId){
+            debugTextEmit.Invoke($"only the host should see this");
+            SetMultiplayerAuthority(Multiplayer.GetUniqueId());
+            Rpc("SetAuthority", [Multiplayer.GetUniqueId(),true]);
+            //i want this to be finished before calling print peers
+        }
+
     }
 
 
@@ -74,10 +88,11 @@ public partial class Client : Node
     private void PrintPeers(){
         debugTextEmit.Invoke($"");
         foreach (var kvp in rtcPeer.GetPeers()){
-            debugTextEmit.Invoke($"peer {kvp.Key}");
+            debugTextEmit.Invoke($"peer {kvp.Key} ");
         }
-
         debugTextEmit.Invoke($"{Multiplayer.GetUniqueId()} (my id)");
+        debugTextEmit.Invoke($"{GetMultiplayerAuthority()} (authority)");
+
         debugTextEmit.Invoke($"current peers");
         
     }
@@ -279,6 +294,8 @@ public partial class Client : Node
     }
 
     
+
+    
     public void AttemptStartGame(){
         if (myState != State.IN_LOBBY){
             debugTextEmit.Invoke($"you are not in lobby, aborting. Current state {myState.ToString()}");
@@ -288,7 +305,7 @@ public partial class Client : Node
         if (hostId == myId){
             debugTextEmit.Invoke($"I should be the authority");
             //start game
-            Rpc("SetAuthority",[Multiplayer.GetUniqueId()]);
+            //Rpc("SetAuthority", [Multiplayer.GetUniqueId()]);
             Rpc("StartGame");
         } else {
             debugTextEmit.Invoke($"you are not the host, you cannot start the game");
@@ -296,8 +313,13 @@ public partial class Client : Node
     }
 
     [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void SetAuthority(int id){
+    private void SetAuthority(int id, bool print_callback = false){
         SetMultiplayerAuthority(id);
+        if (print_callback){
+            debugTextEmit.Invoke($"new authority : {id} , {GetMultiplayerAuthority()}");
+            PrintPeers();
+        }
+
     }    
 
     [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -306,9 +328,9 @@ public partial class Client : Node
             debugTextEmit.Invoke($"this instance is the multiplayer authority");
 
         }
-            debugTextEmit.Invoke($"Starting gameplay session");
-            myState = State.IN_ACTIVE_SESSION;
-
+        debugTextEmit.Invoke($"Starting gameplay session");
+        myState = State.IN_ACTIVE_SESSION;
+        
 
 
     }

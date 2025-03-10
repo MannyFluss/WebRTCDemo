@@ -10,3 +10,7 @@ script = ExtResource("1_28fr7")
 position = Vector2(536, 331)
 scale = Vector2(3.76563, 1)
 texture = ExtResource("1_efny0")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+
+[node name="SpawnPath" type="Node2D" parent="."]
