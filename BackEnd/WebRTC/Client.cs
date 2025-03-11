@@ -19,7 +19,10 @@ public partial class Client : Node
     int hostId = -2;
     string lobbyValue = "";
 
+
     public static Client instance = null;
+
+
     const string defaultPort = "8976";
     //74.111.121.13
     const string DefaultIpAdrress = "ws://127.0.0.1";
@@ -304,8 +307,13 @@ public partial class Client : Node
 
         if (hostId == myId){
             debugTextEmit.Invoke($"I should be the authority");
-            //start game
-            //Rpc("SetAuthority", [Multiplayer.GetUniqueId()]);
+            NetworkPacket message = new NetworkPacket(){
+                Message = Message.DELETE_LOBBY,
+                LobbyValue = lobbyValue,
+            };
+            
+            peer.PutPacket(JsonSerializer.Serialize(message).ToUtf8Buffer());
+
             Rpc("StartGame");
         } else {
             debugTextEmit.Invoke($"you are not the host, you cannot start the game");
@@ -330,7 +338,7 @@ public partial class Client : Node
         }
         debugTextEmit.Invoke($"Starting gameplay session");
         myState = State.IN_ACTIVE_SESSION;
-        
+        GameStarted.Invoke();
 
 
     }

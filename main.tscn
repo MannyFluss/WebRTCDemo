@@ -1,9 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://c1352mruyb878"]
+[gd_scene load_steps=3 format=3 uid="uid://c1352mruyb878"]
 
 [ext_resource type="PackedScene" uid="uid://defktfctvq1e0" path="res://FrontEnd/LobbyUI/LobbyUI.tscn" id="1_ig7tw"]
+[ext_resource type="PackedScene" uid="uid://blkd74w4ysyyg" path="res://SampleGame/Game.tscn" id="2_0xm2m"]
 
 [node name="Main" type="Node"]
 
 [node name="LobbyUI" parent="." instance=ExtResource("1_ig7tw")]
+
+[node name="Game" parent="." instance=ExtResource("2_0xm2m")]
 
 [editable path="LobbyUI"]

@@ -16,6 +16,8 @@ public partial class Server : Node
     Dictionary<string, Lobby> Lobbies = new Dictionary<string, Lobby>();
     string Characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+    private const float lobbyMaxWaitTime = 15f * 60;
+
     public const int defaultPort = 8976;
     [Export]
     bool debug = true;
@@ -99,6 +101,9 @@ public partial class Server : Node
             case Message.JOIN_LOBBY:
                 JoinLobby(packet);
                 break;
+            case Message.DELETE_LOBBY:
+                DeleteLobby(packet.LobbyValue);
+                break;
         }
 
         if (packet.Message == Message.OFFER || packet.Message == Message.ANSWER
@@ -151,11 +156,29 @@ public partial class Server : Node
             LobbyValue = CurrentLobbyValue,
 
         };
-
         debugTextEmit.Invoke($"user joined lobby... \n Updated Lobby Info {CurrentLobbyValue}: {Lobbies[CurrentLobbyValue].StringUsers()}");
-        
+
+        //asynchronous call to delete the lobby after a certain amount of time.    
+        GetTree().CreateTimer(lobbyMaxWaitTime).Timeout += () => DeleteLobby(CurrentLobbyValue);
 
         SendPacketToPeer(packet.Id,LobbyInfoPacket);
+
+    }
+
+    private void DeleteLobby(string id){
+        if (Lobbies.ContainsKey(id)){
+            Lobbies.Remove(id);
+            debugTextEmit.Invoke($"Lobby has been deleted {id}. sesion has started, or {lobbyMaxWaitTime/60} mins have passed");
+        }
+        PrintLobbies();
+
+    }
+
+    private void PrintLobbies(){
+        foreach (var kvp in Lobbies){
+            debugTextEmit.Invoke($"Lobby: {kvp.Key}, with {kvp.Value.Users.Count} users");
+        }
+        debugTextEmit.Invoke($"Current Lobbies:");
 
     }
 

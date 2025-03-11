@@ -51,6 +51,7 @@ public enum Message {
     CHECKIN,
     LOBBY_CONNECTED,
     JOIN_LOBBY,
+    DELETE_LOBBY,
     NONE,
 }
 public struct NetworkPacket

@@ -71,8 +71,15 @@ public partial class LobbyUI : Control
         StartLobbyButton.Pressed += OnStartButtonPressed;
         DisconnectClientButton.Pressed += OnDisconnectButtonPressed;
         
+        MyClient.GameStarted += OnGameStarted;
 
     }
+
+    private void OnGameStarted()
+    {
+        Visible = false;
+    }
+
 
     private void OnDisconnectButtonPressed()
     {

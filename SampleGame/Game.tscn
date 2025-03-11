@@ -3,8 +3,10 @@
 [ext_resource type="Script" uid="uid://dsqekbhejhffl" path="res://SampleGame/Game.cs" id="1_28fr7"]
 [ext_resource type="Texture2D" uid="uid://lwj8shr6rr04" path="res://icon.svg" id="1_efny0"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("SpawnPath")]
+visible = false
 script = ExtResource("1_28fr7")
+SpawnPath = NodePath("SpawnPath")
 
 [node name="_renderer_lol" type="Sprite2D" parent="."]
 position = Vector2(536, 331)
@@ -12,5 +14,7 @@ scale = Vector2(3.76563, 1)
 texture = ExtResource("1_efny0")
 
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://rx7qst80mgne")
+spawn_path = NodePath("../SpawnPath")
 
 [node name="SpawnPath" type="Node2D" parent="."]
