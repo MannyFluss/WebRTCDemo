@@ -1,12 +1,19 @@
 [gd_scene load_steps=3 format=3 uid="uid://c1352mruyb878"]
 
 [ext_resource type="PackedScene" uid="uid://defktfctvq1e0" path="res://FrontEnd/LobbyUI/LobbyUI.tscn" id="1_ig7tw"]
-[ext_resource type="PackedScene" uid="uid://blkd74w4ysyyg" path="res://SampleGame/Game.tscn" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://2tvgd6pvt5gv" path="res://SampleGame/GameLoader.cs" id="2_0xm2m"]
 
 [node name="Main" type="Node"]
 
 [node name="LobbyUI" parent="." instance=ExtResource("1_ig7tw")]
 
-[node name="Game" parent="." instance=ExtResource("2_0xm2m")]
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://blkd74w4ysyyg")
+spawn_path = NodePath("..")
+spawn_limit = 1
+
+[node name="GameLoader" type="Node" parent="." node_paths=PackedStringArray("MySpawner")]
+script = ExtResource("2_0xm2m")
+MySpawner = NodePath("../MultiplayerSpawner")
 
 [editable path="LobbyUI"]

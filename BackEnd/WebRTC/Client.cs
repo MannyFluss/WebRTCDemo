@@ -4,6 +4,7 @@ using Godot.Collections;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
+using System.Security.Cryptography.X509Certificates;
 
 public partial class Client : Node
 {
@@ -33,7 +34,7 @@ public partial class Client : Node
 
     public event Action GameStarted;
 
-    
+    private int AuthorityPEERID = -1;
 
     WebSocketMultiplayerPeer peer = new WebSocketMultiplayerPeer();
     WebRtcMultiplayerPeer rtcPeer = new WebRtcMultiplayerPeer();
@@ -310,8 +311,10 @@ public partial class Client : Node
             NetworkPacket message = new NetworkPacket(){
                 Message = Message.DELETE_LOBBY,
                 LobbyValue = lobbyValue,
+                Id = myId,
             };
             
+
             peer.PutPacket(JsonSerializer.Serialize(message).ToUtf8Buffer());
 
             Rpc("StartGame");
@@ -323,12 +326,27 @@ public partial class Client : Node
     [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void SetAuthority(int id, bool print_callback = false){
         SetMultiplayerAuthority(id);
+        AuthorityPEERID = id;
         if (print_callback){
             debugTextEmit.Invoke($"new authority : {id} , {GetMultiplayerAuthority()}");
             PrintPeers();
         }
+    }
 
-    }    
+    [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void SynchronizeAuthority(NodePath TargetNode){
+        // GD.Print(Multiplayer.GetUniqueId());
+        // if (!IsMultiplayerAuthority()){
+        //     GD.PushError("if you see this(manny) you dont understand stuff");
+        // }
+        Node target = GetNodeOrNull<Node>(TargetNode);
+        if (target==null){
+            GD.PushError("big synchronize error");
+            return;
+        }
+        target.SetMultiplayerAuthority(AuthorityPEERID);
+
+    }
 
     [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void StartGame(){

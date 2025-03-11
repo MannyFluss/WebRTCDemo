@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://lwj8shr6rr04" path="res://icon.svg" id="1_efny0"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("SpawnPath")]
-visible = false
 script = ExtResource("1_28fr7")
 SpawnPath = NodePath("SpawnPath")
 

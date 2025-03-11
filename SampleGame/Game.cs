@@ -15,18 +15,16 @@ public partial class Game : Node2D
         Setup();
     }
     public void Setup(){
-        Client.instance.GameStarted += StartGame;
     }
 
     public void StartGame(){
-        Visible = true;
 
         if (Client.instance.IsMultiplayerAuthority() || true){
             foreach (int peer in Multiplayer.GetPeers()){
                 Node instance = MyScene.Instantiate();
                 instance.Name = peer.ToString();
                 instance.SetMultiplayerAuthority(peer);
-                SpawnPath.AddChild(instance);
+                SpawnPath.AddChild(instance,true);
             }
         }
     }

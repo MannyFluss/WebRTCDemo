@@ -103,6 +103,7 @@ public partial class Server : Node
                 break;
             case Message.DELETE_LOBBY:
                 DeleteLobby(packet.LobbyValue);
+                
                 break;
         }
 
