@@ -98,3 +98,20 @@ public struct NetworkPacket
         Name = name;
     }
 }
+
+public enum InputType{
+    NONE,
+}
+
+
+public struct NetworkInputPacket
+{
+    InputType type;
+
+    public NetworkInputPacket(
+        InputType _type = InputType.NONE
+    ){
+        type = _type;
+    }
+}
+

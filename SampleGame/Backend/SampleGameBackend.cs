@@ -27,7 +27,15 @@ public partial class SampleGameBackend : Node2D
         if (!Client.instance.IsMultiplayerAuthority()){
             QueueFree();
         }
+        Client.instance.InputPackedRecieved += OnInputPacketRecieved;
+
     }
+
+    private void OnInputPacketRecieved(int senderID, NetworkInputPacket packet)
+    {
+        GD.Print($"recieved packet from {senderID} : {packet}");
+    }
+
 
     public SampleGameState GetGameState(){
         return new SampleGameState(ball1.Position,ball2.Position);
