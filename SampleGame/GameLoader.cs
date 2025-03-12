@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Threading.Tasks;
 
 public partial class GameLoader : Node
 {
@@ -15,11 +16,9 @@ public partial class GameLoader : Node
     private void StartGame()
     {
         if (Client.instance.IsMultiplayerAuthority()){
-            GD.Print("set authority");
-            Client.instance.Rpc("SynchronizeAuthority",[this.GetPath()]);
-            
+            Client.instance.Rpc("SynchronizeAuthority",[MySpawner.GetPath(),true]);
+            Client.instance.Rpc("SynchronizeAuthority",[this.GetPath(),true]);
         }
-
 
         if (IsMultiplayerAuthority()){
             GD.Print("Server is spawning the object.");

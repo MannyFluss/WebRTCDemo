@@ -18,7 +18,7 @@ public partial class Game : Node2D
     }
 
     public void StartGame(){
-
+        return;
         if (Client.instance.IsMultiplayerAuthority() || true){
             foreach (int peer in Multiplayer.GetPeers()){
                 Node instance = MyScene.Instantiate();

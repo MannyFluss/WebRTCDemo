@@ -7,9 +7,25 @@
 
 [node name="LobbyUI" parent="." instance=ExtResource("1_ig7tw")]
 
+[node name="ServerUI" parent="LobbyUI/Server" index="0"]
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" parent="LobbyUI/Server/ServerUI" index="1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+
 [node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
 _spawnable_scenes = PackedStringArray("uid://blkd74w4ysyyg")
-spawn_path = NodePath("..")
+spawn_path = NodePath("../GameLoader")
 spawn_limit = 1
 
 [node name="GameLoader" type="Node" parent="." node_paths=PackedStringArray("MySpawner")]

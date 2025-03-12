@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://x7f3c2rkv3se"]
+
+[ext_resource type="Script" uid="uid://jy1e2rvbkii6" path="res://SampleGame/Renderer/SampleGameRenderer.cs" id="1_erqyp"]
+[ext_resource type="Texture2D" uid="uid://lwj8shr6rr04" path="res://icon.svg" id="2_fu4f4"]
+
+[sub_resource type="Gradient" id="Gradient_dnt4g"]
+offsets = PackedFloat32Array(1)
+colors = PackedColorArray(0.729412, 0.701961, 0.894118, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_erqyp"]
+gradient = SubResource("Gradient_dnt4g")
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_erqyp"]
+properties/0/path = NodePath("../Ball1:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_fu4f4"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="SampleGameRenderer" type="Node2D"]
+script = ExtResource("1_erqyp")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(592, 382)
+scale = Vector2(26.2188, 16.1563)
+texture = SubResource("GradientTexture2D_erqyp")
+
+[node name="Ball1" type="Sprite2D" parent="."]
+position = Vector2(265, 212)
+texture = ExtResource("2_fu4f4")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Ball1"]
+root_path = NodePath("../../Sprite2D")
+replication_config = SubResource("SceneReplicationConfig_erqyp")
+
+[node name="Ball2" type="Sprite2D" parent="."]
+position = Vector2(811, 291)
+texture = ExtResource("2_fu4f4")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="Ball2"]
+replication_config = SubResource("SceneReplicationConfig_fu4f4")

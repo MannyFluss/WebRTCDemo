@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
+using System.Reflection.Metadata.Ecma335;
 
 public partial class Client : Node
 {
@@ -23,6 +24,20 @@ public partial class Client : Node
 
     public static Client instance = null;
 
+    public static bool active 
+    {
+        get
+        {
+            if (Client.instance != null && Client.instance.myState == State.IN_ACTIVE_SESSION){
+                return true;
+            } else {return false;}
+        }
+        set
+        {
+            GD.PushError("you cannot set this property.");
+            return;
+        }
+    }
 
     const string defaultPort = "8976";
     //74.111.121.13
@@ -123,6 +138,8 @@ public partial class Client : Node
     public override void _Process(double delta)
     {
         base._Process(delta);
+
+        
         if (peer==null){
             return;
         }
@@ -134,13 +151,13 @@ public partial class Client : Node
                 string packetString = packet.GetStringFromUtf8();
                 NetworkPacket deserializedPacket = JsonSerializer.Deserialize<NetworkPacket>(packetString);
                 //debugTextEmit?.Invoke($"Client {myId} received packet {packetString}");
-
                 parsePacket(deserializedPacket);
             }
-
         }
+
     }
 
+    
     public void JoinLobby(string LobbyID){
         NetworkPacket newPacket = new NetworkPacket(){
             Id = myId,
@@ -333,18 +350,16 @@ public partial class Client : Node
         }
     }
 
+
     [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void SynchronizeAuthority(NodePath TargetNode){
-        // GD.Print(Multiplayer.GetUniqueId());
-        // if (!IsMultiplayerAuthority()){
-        //     GD.PushError("if you see this(manny) you dont understand stuff");
-        // }
+    public void SynchronizeAuthority(NodePath TargetNode, bool recursive){
+
         Node target = GetNodeOrNull<Node>(TargetNode);
         if (target==null){
             GD.PushError("big synchronize error");
             return;
         }
-        target.SetMultiplayerAuthority(AuthorityPEERID);
+        target.SetMultiplayerAuthority(AuthorityPEERID, recursive);
 
     }
 
