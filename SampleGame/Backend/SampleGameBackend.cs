@@ -20,7 +20,15 @@ public partial class SampleGameBackend : Node2D
     Node2D ball1;
     [Export]
     Node2D ball2;
-    
+
+    public override void _Ready()
+    {
+        base._Ready();
+        if (!Client.instance.IsMultiplayerAuthority()){
+            QueueFree();
+        }
+    }
+
     public SampleGameState GetGameState(){
         return new SampleGameState(ball1.Position,ball2.Position);
     }

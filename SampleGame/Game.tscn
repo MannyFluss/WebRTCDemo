@@ -1,17 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://blkd74w4ysyyg"]
+[gd_scene load_steps=5 format=3 uid="uid://blkd74w4ysyyg"]
 
 [ext_resource type="Script" uid="uid://dsqekbhejhffl" path="res://SampleGame/Game.cs" id="1_28fr7"]
 [ext_resource type="PackedScene" uid="uid://x7f3c2rkv3se" path="res://SampleGame/Renderer/SampleGameRenderer.tscn" id="3_y5wjp"]
+[ext_resource type="Script" uid="uid://id6owy23dug1" path="res://SampleGame/Input/Input.cs" id="4_g56m6"]
 [ext_resource type="PackedScene" uid="uid://bfhxht1qtwonx" path="res://SampleGame/Backend/SampleGameBackend.tscn" id="4_vx8wb"]
 
 [node name="Game" type="Node2D" node_paths=PackedStringArray("SpawnPath")]
 z_index = 10
 script = ExtResource("1_28fr7")
 SpawnPath = NodePath("SpawnPath")
-
-[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("uid://rx7qst80mgne")
-spawn_path = NodePath("../SpawnPath")
 
 [node name="SpawnPath" type="Node2D" parent="."]
 
@@ -21,5 +18,8 @@ sprite1 = NodePath("Ball1")
 sprite2 = NodePath("Ball2")
 
 [node name="SampleGameBackend" parent="." instance=ExtResource("4_vx8wb")]
+
+[node name="ClientInputManager" type="Node" parent="."]
+script = ExtResource("4_g56m6")
 
 [editable path="SampleGameRenderer"]
