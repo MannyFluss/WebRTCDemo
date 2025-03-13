@@ -24,17 +24,10 @@ public partial class SampleGameBackend : Node2D
     public override void _Ready()
     {
         base._Ready();
-        if (!Client.instance.IsMultiplayerAuthority()){
-            QueueFree();
-        }
-        Client.instance.InputPackedRecieved += OnInputPacketRecieved;
 
     }
 
-    private void OnInputPacketRecieved(int senderID, NetworkInputPacket packet)
-    {
-        GD.Print($"recieved packet from {senderID} : {packet}");
-    }
+
 
 
     public SampleGameState GetGameState(){

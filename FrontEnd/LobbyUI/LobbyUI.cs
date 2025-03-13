@@ -90,6 +90,8 @@ public partial class LobbyUI : Control
     private void OnStartButtonPressed()
     {
         MyClient.AttemptStartGame();
+        Visible = false;
+        GetViewport().GuiReleaseFocus();
     }
 
 

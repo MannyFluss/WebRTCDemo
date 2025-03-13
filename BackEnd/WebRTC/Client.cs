@@ -379,29 +379,43 @@ public partial class Client : Node
         GameStarted.Invoke();
     }
 
-    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 1, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void _SendInputToAuthority(byte[] serializedData){
+    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    public void _SendInputToAuthority(string serializedData){
         if (Client.instance.IsMultiplayerAuthority()){
-            NetworkInputPacket packetRecieved = JsonSerializer.Deserialize<NetworkInputPacket>(serializedData.GetStringFromUtf8());
-            Client.instance.InputPackedRecieved.Invoke(Multiplayer.GetRemoteSenderId(),packetRecieved);
+            GD.Print("Received input data: ", serializedData);
+            
+        try 
+            {
+                NetworkInputPacket packetRecieved = JsonSerializer.Deserialize<NetworkInputPacket>(serializedData);
+                Client.instance.InputPackedRecieved.Invoke(Multiplayer.GetRemoteSenderId(), packetRecieved);
+            }
+            catch (Exception e)
+            {
+                GD.PushError($"Deserialization failed: {e.Message}");
+            }
+
         }
     }
+    
     static public void SendInputToAuthority(NetworkInputPacket packetToSend){
-        byte[] data = JsonSerializer.Serialize(packetToSend).ToUtf8Buffer();
-        Client.instance.Rpc("_SendInputToAuthority",[data]);
+
+        string data = JsonSerializer.Serialize(packetToSend);
+        GD.Print("sending input data: ", data);
+
+        Client.instance.Rpc("_SendInputToAuthority",data);
     }
 
-    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 1, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
-    private void _SendInputToAuthorityUnreliable(byte[] serializedData){
-        if (Client.instance.IsMultiplayerAuthority()){
+    // [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 1, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
+    // private void _SendInputToAuthorityUnreliable(byte[] serializedData){
+    //     if (Client.instance.IsMultiplayerAuthority()){
 
-        }
+    //     }
 
-    }
+    // }
 
-    static public void SendInputToAuthorityUnreliable(NetworkInputPacket packetToSend){
-        throw new NotImplementedException();
-    }
+    // static public void SendInputToAuthorityUnreliable(NetworkInputPacket packetToSend){
+    //     throw new NotImplementedException();
+    // }
 
 
 
