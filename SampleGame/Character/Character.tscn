@@ -1,18 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://rx7qst80mgne"]
+[gd_scene load_steps=2 format=3 uid="uid://d03uh2mi3027r"]
 
-[ext_resource type="Texture2D" uid="uid://lwj8shr6rr04" path="res://icon.svg" id="1_pn558"]
-[ext_resource type="Script" uid="uid://duf11kpo1oygl" path="res://SampleGame/Character/Character.cs" id="1_rqc5d"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_w4d3d"]
+radius = 41.1096
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_pn558"]
-properties/0/path = NodePath(".:position")
-properties/0/spawn = true
-properties/0/replication_mode = 1
+[node name="Character" type="RigidBody2D"]
 
-[node name="Character" type="Node2D"]
-script = ExtResource("1_rqc5d")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_pn558")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_pn558")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_w4d3d")

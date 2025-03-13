@@ -19,10 +19,8 @@ z_index = 10
 
 [node name="Local" type="Node2D" parent="."]
 
-[node name="SampleGameRenderer" parent="Local" node_paths=PackedStringArray("MyBackend", "sprite1", "sprite2") instance=ExtResource("3_y5wjp")]
+[node name="SampleGameRenderer" parent="Local" node_paths=PackedStringArray("MyBackend") instance=ExtResource("3_y5wjp")]
 MyBackend = NodePath("../../Network/SampleGameBackend")
-sprite1 = NodePath("Ball1")
-sprite2 = NodePath("Ball2")
 
 [node name="ClientInputManager" type="Node" parent="Local"]
 script = ExtResource("4_g56m6")

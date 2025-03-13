@@ -8,6 +8,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Collections.Generic;
 
 public partial class Client : Node
 {
@@ -160,9 +161,9 @@ public partial class Client : Node
                 parsePacket(deserializedPacket);
             }
         }
-
     }
 
+    
     
     public void JoinLobby(string LobbyID){
         NetworkPacket newPacket = new NetworkPacket(){
@@ -191,7 +192,7 @@ public partial class Client : Node
                 int peerId = (int)kvp.Key;
                 if (rtcPeer.HasPeer(peerId)) {
                     WebRtcPeerConnection connection = (WebRtcPeerConnection)rtcPeer.GetPeer(peerId)["connection"];
-                    connection.Close(); 
+                    connection.Close();
                     // Properly close the WebRTC connection
                 }
             }
@@ -269,6 +270,10 @@ public partial class Client : Node
 
     private void setupMesh(int id)
     {
+        if (myState != State.DISCONNECTED){
+            debugTextEmit.Invoke($"invalid state for creating mesh {myState.ToString()}");
+            
+        }
         //hooks up the rpc connections
         rtcPeer.CreateMesh(id);
         Multiplayer.MultiplayerPeer = rtcPeer;

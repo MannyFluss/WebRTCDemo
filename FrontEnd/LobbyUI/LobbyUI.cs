@@ -63,6 +63,10 @@ public partial class LobbyUI : Control
 
         MyClient.LobbyValueRecieved += (string value) => { GD.Print( "hi", value) ; LobbyValueLabel.Text = value;};
 
+        ConnectAllSignals();
+    }
+
+    private void ConnectAllSignals(){
         connectclientbutton.Pressed += onConnectClientPressed;
         connectserverbutton.Pressed += onServerButtonPressed;
         packetbutton.Pressed += onPacketButtonPressed;
@@ -70,14 +74,32 @@ public partial class LobbyUI : Control
         CopyLabelValue.Pressed += onCopyLabelValueButtonPressed;
         StartLobbyButton.Pressed += OnStartButtonPressed;
         DisconnectClientButton.Pressed += OnDisconnectButtonPressed;
-        
         MyClient.GameStarted += OnGameStarted;
+        
+    }
 
+
+    private void DisconnectAllSignals(){
+        connectclientbutton.Pressed -= onConnectClientPressed;
+        connectserverbutton.Pressed -= onServerButtonPressed;
+        packetbutton.Pressed -= onPacketButtonPressed;
+        joinLobbyButton.Pressed -= onJoinLobbyButtonPressed;
+        CopyLabelValue.Pressed -= onCopyLabelValueButtonPressed;
+        StartLobbyButton.Pressed -= OnStartButtonPressed;
+        DisconnectClientButton.Pressed -= OnDisconnectButtonPressed;
+        MyClient.GameStarted -= OnGameStarted;
+        
     }
 
     private void OnGameStarted()
     {
         Visible = false;
+        GetViewport().GuiReleaseFocus();
+        MouseFilter = MouseFilterEnum.Stop;
+        //DisconnectAllSignals();
+        myClientUI.Visible = false;
+        myServerUI.Visible = false;
+        
     }
 
 
@@ -90,8 +112,7 @@ public partial class LobbyUI : Control
     private void OnStartButtonPressed()
     {
         MyClient.AttemptStartGame();
-        Visible = false;
-        GetViewport().GuiReleaseFocus();
+
     }
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bfhxht1qtwonx"]
+[gd_scene load_steps=5 format=3 uid="uid://bfhxht1qtwonx"]
 
 [ext_resource type="Script" uid="uid://di40scjd70sb3" path="res://SampleGame/Backend/SampleGameBackend.cs" id="1_8wypa"]
 [ext_resource type="Script" uid="uid://dycfejll1xkvq" path="res://SampleGame/Backend/BackendInputParser.cs" id="2_6lcvb"]
@@ -6,19 +6,11 @@
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_hmxwy"]
 bounce = 1.0
 
-[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_8wypa"]
-bounce = 1.0
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_hmxwy"]
-radius = 67.1863
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hmxwy"]
 size = Vector2(2022, 20)
 
-[node name="SampleGameBackend" type="Node2D" node_paths=PackedStringArray("ball1", "ball2")]
+[node name="SampleGameBackend" type="Node2D"]
 script = ExtResource("1_8wypa")
-ball1 = NodePath("Physics/StaticBody2D/TestGuy1")
-ball2 = NodePath("Physics/StaticBody2D/TestGuy2")
 
 [node name="Physics" type="Node2D" parent="."]
 
@@ -28,24 +20,12 @@ physics_material_override = SubResource("PhysicsMaterial_hmxwy")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Physics/StaticBody2D"]
 polygon = PackedVector2Array(67, 195, 189, 544, 497, 586, 692, 588, 971, 520, 1056, 181, 1064, -34, 1219, -42, 1254, 760, -161, 764, -150, -59, 38, -58)
 
-[node name="TestGuy1" type="RigidBody2D" parent="Physics/StaticBody2D"]
-position = Vector2(227, -13)
-physics_material_override = SubResource("PhysicsMaterial_8wypa")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Physics/StaticBody2D/TestGuy1"]
-shape = SubResource("CircleShape2D_hmxwy")
-
-[node name="TestGuy2" type="RigidBody2D" parent="Physics/StaticBody2D"]
-position = Vector2(873, 2)
-mass = 1.764
-physics_material_override = SubResource("PhysicsMaterial_8wypa")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Physics/StaticBody2D/TestGuy2"]
-shape = SubResource("CircleShape2D_hmxwy")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Physics/StaticBody2D"]
 position = Vector2(420, -104)
 shape = SubResource("RectangleShape2D_hmxwy")
+
+[node name="Players" type="Node2D" parent="Physics"]
+unique_name_in_owner = true
 
 [node name="BackendInputManager" type="Node" parent="."]
 script = ExtResource("2_6lcvb")
