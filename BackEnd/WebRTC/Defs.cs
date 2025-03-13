@@ -106,14 +106,11 @@ public enum InputType{
 
 public struct NetworkInputPacket
 {
-    public int buffer {get; set;}
     public InputType type {get; set;}
-
     public NetworkInputPacket(
         InputType _type = InputType.NONE
     ){
         type = _type;
-        buffer=999;
     }
 }
 

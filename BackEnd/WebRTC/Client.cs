@@ -7,6 +7,7 @@ using System.Net.Mail;
 using System.Security.Cryptography.X509Certificates;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 public partial class Client : Node
 {
@@ -375,6 +376,10 @@ public partial class Client : Node
 
         }
         debugTextEmit.Invoke($"Starting gameplay session");
+        if (Multiplayer.GetPeers().Count() == 0){
+            debugTextEmit.Invoke($"this is the only client, establishing authority");
+            SetMultiplayerAuthority(Multiplayer.GetUniqueId());
+        }
         myState = State.IN_ACTIVE_SESSION;
         GameStarted.Invoke();
     }
