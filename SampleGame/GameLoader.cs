@@ -24,7 +24,6 @@ public partial class GameLoader : Node
 		Client.instance.SynchronizeAuthority(MySpawner.GetPath(),true);
 		Client.instance.SynchronizeAuthority(this.GetPath(),true);
 
-
 		if (IsMultiplayerAuthority()){
 			GD.Print("CCCCCCCCCCCCCCCCC");
 			GD.Print("Server is spawning the object.");

@@ -378,7 +378,9 @@ public partial class Client : Node
         debugTextEmit.Invoke($"Starting gameplay session");
         if (Multiplayer.GetPeers().Count() == 0){
             debugTextEmit.Invoke($"this is the only client, establishing authority");
+
             SetMultiplayerAuthority(Multiplayer.GetUniqueId());
+            AuthorityPEERID = Multiplayer.GetUniqueId();
         }
         myState = State.IN_ACTIVE_SESSION;
         GameStarted.Invoke();
