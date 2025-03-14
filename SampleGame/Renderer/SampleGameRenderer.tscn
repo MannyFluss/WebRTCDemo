@@ -9,8 +9,9 @@ colors = PackedColorArray(0.729412, 0.701961, 0.894118, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_erqyp"]
 gradient = SubResource("Gradient_dnt4g")
 
-[node name="SampleGameRenderer" type="Node2D"]
+[node name="SampleGameRenderer" type="Node2D" node_paths=PackedStringArray("MySpawner")]
 script = ExtResource("1_erqyp")
+MySpawner = NodePath("MultiplayerSpawner")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(592, 382)
@@ -19,3 +20,7 @@ texture = SubResource("GradientTexture2D_erqyp")
 
 [node name="Players" type="Node2D" parent="."]
 unique_name_in_owner = true
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://2xs7825hmne4")
+spawn_path = NodePath("../Players")

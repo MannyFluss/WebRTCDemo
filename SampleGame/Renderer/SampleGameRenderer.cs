@@ -8,6 +8,8 @@ public partial class SampleGameRenderer : Node2D
     SampleGameBackend MyBackend;
 
     Node2D PlayersPath;
+    [Export]
+    MultiplayerSpawner MySpawner;
     
     private Dictionary<int, Node2D> myPlayerRenderers = new Dictionary<int, Node2D>();
 
@@ -23,11 +25,8 @@ public partial class SampleGameRenderer : Node2D
 
     private void Setup()
     {
-        if (Client.instance.IsMultiplayerAuthority()){
-            //Client.instance.Rpc("SynchronizeAuthority",[this.GetPath(),true]);
-        }
-        Client.instance.SynchronizeAuthority(GetPath(),true);
 
+        
     }
 
     public override void _PhysicsProcess(double delta)
@@ -37,13 +36,13 @@ public partial class SampleGameRenderer : Node2D
             return;
         }
 
-        if (IsMultiplayerAuthority()){
-            SampleGameState state = MyBackend.GetGameState();
-            renderGameState(state);
-        }
+        SampleGameState state = MyBackend.GetGameState();
+        renderGameState(state);
+        
     }
 
     private void renderGameState(SampleGameState state){
+        GD.Print(Multiplayer.GetUniqueId(), " yaaaa");
         var players = state.Players;
         foreach (var kvp in players){
             if (myPlayerRenderers.ContainsKey(kvp.Key)){
@@ -63,8 +62,11 @@ public partial class SampleGameRenderer : Node2D
 
         Node2D newRendererScene = playerRendererScene.Instantiate<Node2D>();
         newRendererScene.Position = playerState.position;
-        PlayersPath.AddChild(newRendererScene);
+        PlayersPath.AddChild(newRendererScene,true);
         myPlayerRenderers[id] = newRendererScene;
+
+        Client.instance.SynchronizeAuthority(newRendererScene.GetPath(),false);
+
 
     }
 

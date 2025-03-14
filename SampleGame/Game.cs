@@ -6,7 +6,6 @@ public partial class Game : Node2D
     [Export]
     Node2D SpawnPath;
 
-    PackedScene MyScene = GD.Load<PackedScene>("res://SampleGame/Character/Character.tscn");
 
 
     public override void _Ready()
