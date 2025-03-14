@@ -40,9 +40,7 @@ public partial class SampleGameRenderer : Node2D
         renderGameState(state);
         
     }
-
     private void renderGameState(SampleGameState state){
-        GD.Print(Multiplayer.GetUniqueId(), " yaaaa");
         var players = state.Players;
         foreach (var kvp in players){
             if (myPlayerRenderers.ContainsKey(kvp.Key)){
@@ -50,8 +48,6 @@ public partial class SampleGameRenderer : Node2D
             }else{
                 instantiatePlayerRenderer(kvp.Key,kvp.Value);
             }
-
-
         }
     }
     private void instantiatePlayerRenderer(int id, PlayerState playerState){
@@ -62,6 +58,7 @@ public partial class SampleGameRenderer : Node2D
 
         Node2D newRendererScene = playerRendererScene.Instantiate<Node2D>();
         newRendererScene.Position = playerState.position;
+        newRendererScene.Name = id.ToString();
         PlayersPath.AddChild(newRendererScene,true);
         myPlayerRenderers[id] = newRendererScene;
 

@@ -23,24 +23,39 @@ public struct SampleGameState {
 }
 
 
+
 public partial class SampleGameBackend : Node2D
 {
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        Converters = { new Vector2Converter() }
+    };
     private PackedScene PlayerScene = GD.Load<PackedScene>("res://SampleGame/Backend/BackendCharacter/Character.tscn");
     public Dictionary<int,Node2D> MyPlayers = new Dictionary<int,Node2D>();
     private Node2D PlayersSpawnPath;
-    private SampleGameState MyState;
+    private SampleGameState MyState = new SampleGameState();
     public override void _Ready()
     {
-
+        base._Ready();
+        PlayersSpawnPath = GetNode<Node2D>("%Players");
         Client.instance.SynchronizeAuthority(GetPath(),false);
         if (!IsMultiplayerAuthority()){
             return;
         }
+        CallDeferred("Setup");
 
-        PlayersSpawnPath = GetNode<Node2D>("%Players");
-        base._Ready();
-        foreach (int peerId in Multiplayer.GetPeers().Append(Multiplayer.GetUniqueId())){
-            GD.Print(peerId);
+    }
+    public void Setup(){
+        List<int> allIds = [.. Multiplayer.GetPeers(), Multiplayer.GetUniqueId()];
+
+        foreach (int id in allIds){
+            GD.Print(id, "gotten");
+            
+        }
+        GD.Print(Multiplayer.GetUniqueId(), "my id");
+
+
+        foreach (int peerId in allIds){
             Node2D newPlayer = PlayerScene.Instantiate<Node2D>();
             newPlayer.Position = new Vector2(500,100);
             MyPlayers[peerId] = newPlayer;
@@ -52,14 +67,15 @@ public partial class SampleGameBackend : Node2D
         base._PhysicsProcess(delta);
         if (IsMultiplayerAuthority()){
             updateGameState();
-            string stateData =  JsonSerializer.Serialize(GetGameState());
+            string stateData =  JsonSerializer.Serialize(GetGameState(),JsonOptions);
+            GD.Print(stateData);
             Rpc("replicateGameStates", stateData);
         }
     }
 
     [Rpc (MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
     private void replicateGameStates(string data){
-        SampleGameState newState = JsonSerializer.Deserialize<SampleGameState>(data);
+        SampleGameState newState = JsonSerializer.Deserialize<SampleGameState>(data,JsonOptions);
         MyState = newState;
     }
 
@@ -68,7 +84,7 @@ public partial class SampleGameBackend : Node2D
 
         foreach (var kvp in MyPlayers){
             toAdd[kvp.Key] = new PlayerState(kvp.Value.Position);
-
+            //GD.Print(kvp.Value.Position);
         }
 
         MyState = new SampleGameState(toAdd);
