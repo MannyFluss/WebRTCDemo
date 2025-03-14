@@ -1,9 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://b28ns8xx6uyt3"]
+[gd_scene load_steps=3 format=3 uid="uid://b28ns8xx6uyt3"]
+
+[ext_resource type="Script" uid="uid://cpx7p7x0qbrjh" path="res://SampleGame/Backend/BackendCharacter/Character.cs" id="1_rhjau"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_xecwi"]
 radius = 57.0
 
 [node name="Character" type="RigidBody2D"]
+script = ExtResource("1_rhjau")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_xecwi")

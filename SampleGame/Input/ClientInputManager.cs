@@ -14,7 +14,7 @@ public partial class ClientInputManager : Node
     {
         base._Input(@event);
         if (@event.IsActionPressed("ui_up")){
-            Client.SendInputToAuthority(new NetworkInputPacket(InputType.NONE));
+            Client.SendInputToAuthority(new NetworkInputPacket(InputType.FLICK));
         }
     }
 

@@ -31,7 +31,7 @@ public partial class SampleGameBackend : Node2D
         Converters = { new Vector2Converter() }
     };
     private PackedScene PlayerScene = GD.Load<PackedScene>("res://SampleGame/Backend/BackendCharacter/Character.tscn");
-    public Dictionary<int,Node2D> MyPlayers = new Dictionary<int,Node2D>();
+    public Dictionary<int,Character> MyPlayers = new Dictionary<int,Character>();
     private Node2D PlayersSpawnPath;
     private SampleGameState MyState = new SampleGameState();
     public override void _Ready()
@@ -56,7 +56,7 @@ public partial class SampleGameBackend : Node2D
 
 
         foreach (int peerId in allIds){
-            Node2D newPlayer = PlayerScene.Instantiate<Node2D>();
+            Character newPlayer = PlayerScene.Instantiate<Character>();
             newPlayer.Position = new Vector2(500,100);
             MyPlayers[peerId] = newPlayer;
             PlayersSpawnPath.AddChild(newPlayer,true);
@@ -68,7 +68,6 @@ public partial class SampleGameBackend : Node2D
         if (IsMultiplayerAuthority()){
             updateGameState();
             string stateData =  JsonSerializer.Serialize(GetGameState(),JsonOptions);
-            GD.Print(stateData);
             Rpc("replicateGameStates", stateData);
         }
     }
@@ -90,6 +89,14 @@ public partial class SampleGameBackend : Node2D
         MyState = new SampleGameState(toAdd);
 
         //add in some sort of rpc to send this out to all the other peers
+    }
+
+    public void pingPlayerBall(int playerID){
+        if (MyPlayers.ContainsKey(playerID)){
+            MyPlayers[playerID].Flick();
+        } else {
+            GD.PushError("game state does not contain ", playerID);
+        }
     }
 
 

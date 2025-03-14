@@ -101,6 +101,7 @@ public struct NetworkPacket
 
 public enum InputType{
     NONE,
+    FLICK,
 }
 
 

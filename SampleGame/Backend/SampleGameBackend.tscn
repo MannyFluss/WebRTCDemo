@@ -1,21 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://bfhxht1qtwonx"]
+[gd_scene load_steps=5 format=3 uid="uid://bfhxht1qtwonx"]
 
 [ext_resource type="Script" uid="uid://di40scjd70sb3" path="res://SampleGame/Backend/SampleGameBackend.cs" id="1_8wypa"]
 [ext_resource type="Script" uid="uid://dycfejll1xkvq" path="res://SampleGame/Backend/BackendInputParser.cs" id="2_6lcvb"]
 
-[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_6lcvb"]
-
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_hmxwy"]
-bounce = 1.0
+bounce = 0.3
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hmxwy"]
 size = Vector2(2022, 20)
 
 [node name="SampleGameBackend" type="Node2D"]
 script = ExtResource("1_8wypa")
-
-[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
-replication_config = SubResource("SceneReplicationConfig_6lcvb")
 
 [node name="Physics" type="Node2D" parent="."]
 
