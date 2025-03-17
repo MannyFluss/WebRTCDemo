@@ -13,6 +13,7 @@ public partial class BackendInputParser : Node
         }
         MyBackend = GetParent<SampleGameBackend>();
         Client.instance.InputPackedRecieved += OnInputPacketRecieved;
+        Client.instance.InputPackedRecievedUnreliable += OnInputPacketRecieved;
     }
 
     private void OnInputPacketRecieved(int senderID, NetworkInputPacket packet)
@@ -21,6 +22,15 @@ public partial class BackendInputParser : Node
 
         if (packet.type == InputType.FLICK){
             MyBackend.pingPlayerBall(senderID);
+        }
+        if (packet.type == InputType.GAME_PRESSED){
+            MyBackend.PlayerStartMoving(senderID);
+        }
+        if (packet.type == InputType.GAME_HELD){
+            MyBackend.PlayerMoving(senderID,(Vector2)packet.vec1);
+        }
+        if (packet.type == InputType.GAME_RELEASED){
+            MyBackend.PlayerStopMoving(senderID);
         }
     }
 

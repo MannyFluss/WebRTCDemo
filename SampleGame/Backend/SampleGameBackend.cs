@@ -8,9 +8,12 @@ using System.Text.Json;
 
 public struct PlayerState {
     public Vector2 position {set;get;}
+    public float rotation {set;get;}
 
-    public PlayerState(Vector2 _position){
+
+    public PlayerState(Vector2 _position, float _rotation){
         position = _position;
+        rotation = _rotation;
     }
 }
 public struct SampleGameState {
@@ -82,7 +85,7 @@ public partial class SampleGameBackend : Node2D
         Dictionary<int,PlayerState> toAdd = new Dictionary<int, PlayerState>(); 
 
         foreach (var kvp in MyPlayers){
-            toAdd[kvp.Key] = new PlayerState(kvp.Value.Position);
+            toAdd[kvp.Key] = new PlayerState(kvp.Value.Position, kvp.Value.Rotation);
             //GD.Print(kvp.Value.Position);
         }
 
@@ -99,6 +102,26 @@ public partial class SampleGameBackend : Node2D
         }
     }
 
+    public void PlayerStartMoving(int playerID){
+
+    }
+    public void PlayerMoving(int playerID, Vector2 moveBy){
+        if (MyPlayers.ContainsKey(playerID)){
+            MyPlayers[playerID].Position += moveBy;
+            if (moveBy.Length() > 3){
+                MyPlayers[playerID].Rotation = moveBy.Angle();
+            } else {
+                MyPlayers[playerID].Rotation = MyPlayers[playerID].Rotation;
+            }
+                
+
+        } else {
+            GD.PushError("game state does not contain ", playerID);
+        }  
+    }
+    public void PlayerStopMoving(int playerID){
+        
+    }
 
     public SampleGameState GetGameState(){
         return MyState;

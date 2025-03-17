@@ -102,16 +102,26 @@ public struct NetworkPacket
 public enum InputType{
     NONE,
     FLICK,
+    GAME_PRESSED,
+    GAME_HELD,
+    GAME_RELEASED,
+
 }
 
 
+//for now the packets will just hold any combination of data possible in nullable form
 public struct NetworkInputPacket
 {
     public InputType type {get; set;}
+    public Vector2? vec1 {get;set;}
     public NetworkInputPacket(
         InputType _type = InputType.NONE
     ){
         type = _type;
+    }
+    public NetworkInputPacket(InputType _type, Vector2? _vec1){
+        type = _type;
+        vec1 = _vec1;
     }
 }
 

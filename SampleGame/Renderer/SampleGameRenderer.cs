@@ -44,7 +44,9 @@ public partial class SampleGameRenderer : Node2D
         var players = state.Players;
         foreach (var kvp in players){
             if (myPlayerRenderers.ContainsKey(kvp.Key)){
-                myPlayerRenderers[kvp.Key].Position = kvp.Value.position;
+                myPlayerRenderers[kvp.Key].Position = myPlayerRenderers[kvp.Key].Position.Lerp(players[kvp.Key].position,.8f);
+                myPlayerRenderers[kvp.Key].Rotation = Mathf.LerpAngle(myPlayerRenderers[kvp.Key].Rotation, players[kvp.Key].rotation,.8f);
+            
             }else{
                 instantiatePlayerRenderer(kvp.Key,kvp.Value);
             }

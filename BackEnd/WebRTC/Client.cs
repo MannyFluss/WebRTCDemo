@@ -61,6 +61,11 @@ public partial class Client : Node
     WebSocketMultiplayerPeer peer = new WebSocketMultiplayerPeer();
     WebRtcMultiplayerPeer rtcPeer = new WebRtcMultiplayerPeer();
 
+    private static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+    {
+        Converters = { new Vector2Converter() }
+    };
+
     public override void _Ready()
     {
         base._Ready();
@@ -398,7 +403,7 @@ public partial class Client : Node
             
         try 
             {
-                NetworkInputPacket packetRecieved = JsonSerializer.Deserialize<NetworkInputPacket>(serializedData);
+                NetworkInputPacket packetRecieved = JsonSerializer.Deserialize<NetworkInputPacket>(serializedData,JsonOptions);
                 Client.instance.InputPackedRecieved.Invoke(Multiplayer.GetRemoteSenderId(), packetRecieved);
             }
             catch (Exception e)
@@ -408,28 +413,39 @@ public partial class Client : Node
 
         }
     }
-    
     static public void SendInputToAuthority(NetworkInputPacket packetToSend){
 
-        string data = JsonSerializer.Serialize(packetToSend);
+        string data = JsonSerializer.Serialize(packetToSend,JsonOptions);
         GD.Print("sending input data: ", data);
 
         Client.instance.Rpc("_SendInputToAuthority",data);
     }
 
-    // [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 1, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
-    // private void _SendInputToAuthorityUnreliable(byte[] serializedData){
-    //     if (Client.instance.IsMultiplayerAuthority()){
 
-    //     }
+    [Rpc (MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferChannel = 0, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
+    public void _SendInputToAuthorityUnreliable(string serializedData){
+        if (Client.instance.IsMultiplayerAuthority()){
+            GD.Print("Received input data: ", serializedData);
+            
+        try 
+            {
+                NetworkInputPacket packetRecieved = JsonSerializer.Deserialize<NetworkInputPacket>(serializedData,JsonOptions);
+                Client.instance.InputPackedRecievedUnreliable.Invoke(Multiplayer.GetRemoteSenderId(), packetRecieved);
+            }
+            catch (Exception e)
+            {
+                GD.PushError($"Deserialization failed: {e.Message}");
+            }
 
-    // }
+        }
+    }
+    static public void SendInputToAuthorityUnreliable(NetworkInputPacket packetToSend){
 
-    // static public void SendInputToAuthorityUnreliable(NetworkInputPacket packetToSend){
-    //     throw new NotImplementedException();
-    // }
+        string data = JsonSerializer.Serialize(packetToSend,JsonOptions);
+        GD.Print("sending input data: ", data);
 
-
+        Client.instance.Rpc("_SendInputToAuthorityUnreliable",data);
+    }
 
 
     //ice candidate candidate
